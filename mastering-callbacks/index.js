@@ -1,29 +1,82 @@
-// Callback Chain
-var fs = require('fs')
+// to run the programme live on browser:
+// type 'npm start' in the terminal and
+// visit specified localhost
 
-function getBears (filepath, done) {
-  fs.readFile(filepath, function (err, bears) {
-    if (err) return done(err)
+var bears = ['brown','grizzly', 'polar'];
+var images = [];
+var count = bears.length;
 
-    fs.readFile('bears.dictionary', function (err, dict) {
-      if (err) return done(err)
-
-      compareBears(bears, dict)
-    })
-  })
-
-  function compareBears (bears, dict) {
-    dict = dict.toString().split('\n')
-    bears = bears.toString().split('\n').filter(function (bear) {
-      return dict.indexOf(bear) !== -1
-    })
-    done(null, bears)
+function loadBears() {
+  var bear = bears.shift();
+  if (!bear) {
+    console.log('All bears loaded.', images);
+    displayBears(images);
+    return;
   }
+  var img = new Image();
+  img.onload = function() {
+    console.log(bear + ' bear is loaded');
+    loadBears();
+  };
+  img.src = bear + '.jpg';
+  images.push(img);
 }
 
-getBears('bears.txt', function (err, bears) {
-  console.log(bears)
-})
+function displayBears(images) {
+  console.log('Displaying loaded images...');
+  images.forEach(function(image) {
+    document.body.appendChild(image);
+  });
+}
+
+loadBears();
+
+// bears = bears.map(function(bear) {
+//   var img = new Image();
+//   img.onload = function() {
+//     console.log(bear);
+//     next();
+//   };
+//   img.src = bear + '.jpg';
+//   return img;
+// });
+//
+// function next() {
+//   count--;
+//   if (count < 1) {
+//     bears.forEach(function(bear) {
+//       console.log(bear.width);
+//       document.body.appendChild(bear);
+//     });
+//   }
+// }
+
+// Callback Chain
+// var fs = require('fs');
+//
+// function getBears (filepath, done) {
+//   fs.readFile(filepath, function (err, bears) {
+//     if (err) return done(err);
+//
+//     fs.readFile('bears.dictionary', function (err, dict) {
+//       if (err) return done(err);
+//
+//       compareBears(bears, dict);
+//     });
+//   });
+//
+//   function compareBears (bears, dict) {
+//     dict = dict.toString().split('\n');
+//     bears = bears.toString().split('\n').filter(function (bear) {
+//       return dict.indexOf(bear) !== -1;
+//     });
+//     done(null, bears);
+//   }
+// }
+//
+// getBears('bears.txt', function (err, bears) {
+//   console.log(bears);
+// });
 
 // Callback Chunks
 // var bears = ['grizzly', 'polar', 'brown']
